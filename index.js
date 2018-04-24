@@ -10,7 +10,7 @@ const app = express();
 //Below code snippet is a route handler
 // Section 2 Lecture 11 on SG:s course goes into the specifics
 app.get('/', (req, res) => {
-	res.send({ hi: 'there' });
+	res.send({ bye: 'buddy' });
 });
 
 // Look at the underlying environment and see if there's a port dedicated
