@@ -1,17 +1,43 @@
 //require instead of import because node uses "common JS modules" (as of creatoin of SG-course)
 const express = require('express');
-const app = express();
+const mongoose = require('mongoose'); // helps deal with mongDB
+const cookieSession = require('cookie-session'); // give us access to cookies
+const passport = require('passport');
+const keys = require('./config/keys');
+//Instead of writing everything in index.js, we divide the contents into services and routes
+//aswell. Simply requireing, like below, inserts the code in that file, into this one. I think
+require('./models/user');
+require('./services/passport');
+mongoose.connect(keys.mongoURI);
+
 // The express application represents a running express app
 // The app object is used to set up configuration that will listen fo incoming requests
 // that are being routed from the node-side to the express-side and then route these requests
 // to different request handlers. All route handlers that we create will be associated
 // or "registred" with this app object.
+// Section 2 Lecture 11 on SG:s node/react course goes into the specifics of a routehandler
+const app = express();
 
-//Below code snippet is a route handler
-// Section 2 Lecture 11 on SG:s course goes into the specifics
-app.get('/', (req, res) => {
-	res.send({ bye: 'buddy' });
-});
+//app.use specifies niddleware. It preprocesses the incoming requests before they are
+//sent to our different routehandlers.
+app.use(
+	cookieSession({
+		maxAge: 30 * 24 * 60 * 60 * 1000,
+		keys: [keys.cookieKey]
+	})
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Since authRoutes makes use of the "app" object, we simply can't include that code lite we do
+// above with passport. We require the module (that is being exported from authroutes)
+// as a function, and call it with the app object
+// equivalent to: require('./routes/authRoutes')(app);
+const authRoutes = require('./routes/authRoutes');
+
+// Calling the routes function (our routehandlers), which uses the app object
+authRoutes(app);
 
 // Look at the underlying environment and see if there's a port dedicated
 // for my server. Otherwise, use 5000
