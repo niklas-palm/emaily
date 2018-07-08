@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'production') {
 	//Express will serve up the index.htlm if it doesn't recognie the route.
 	const path = require('path');
 	app.get('*', (req, res) => {
-		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.htlm'));
+		res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
 	});
 }
 
