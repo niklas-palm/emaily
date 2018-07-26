@@ -7,7 +7,8 @@ const bodyParser = require('body-parser');
 const keys = require('./config/keys');
 //Instead of writing everything in index.js, we divide the contents into services and routes
 //aswell. Simply requireing, like below, inserts the code in that file, into this one. I think
-require('./models/user');
+require('./models/User');
+require('./models/Survey');
 require('./services/passport');
 mongoose.connect(keys.mongoURI);
 
@@ -36,13 +37,14 @@ app.use(passport.session());
 // Since authRoutes makes use of the "app" object, we simply can't include that code like we do
 // above with passport. We require the module (that is being exported from authroutes)
 // as a function, and call it with the app object
-// equivalent to: require('./routes/authRoutes')(app);
+// equivalent to simply: require('./routes/authRoutes')(app);
 const authRoutes = require('./routes/authRoutes');
 const billingRoutes = require('./routes/billingRoutes');
-
+const surveyRoutes = require('./routes/surveyRoutes');
 // Calling the routes function (our routehandlers), which uses the app object
 authRoutes(app);
 billingRoutes(app);
+surveyRoutes(app);
 
 if (process.env.NODE_ENV === 'production') {
 	//Express will serve up production assets like our main.js or main.js file.
